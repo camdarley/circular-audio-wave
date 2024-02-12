@@ -6,6 +6,7 @@ class CircularAudioWave {
         this.minChartValue = 100;
         this.chart = echarts.init(elem);
         this.playing = false;
+        this.started = false;
         this.lineColorOffset = 0;
         this.tick = 0;
 
@@ -279,17 +280,23 @@ class CircularAudioWave {
 
     play() {
         if (this.sourceNode && this.sourceNode.buffer) {
+            if (!this.started) {
+                this.started = true;
+                this.presetOption();
+                this.sourceNode.start(0);
+                this._debouncedDraw();
+            }
+            else {
+                this.context.resume();
+            } 
             this.playing = true;
-            this.presetOption();
-            this.sourceNode.start(0);
-            this._debouncedDraw();
         } else {
             alert('Audio is not ready');
         }
     }
     // TODO
     pause() {
-
+        this.context.suspend();
     }
     destroy() {
         this.chart.dispose();
