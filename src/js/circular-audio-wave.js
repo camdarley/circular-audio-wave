@@ -135,6 +135,7 @@ class CircularAudioWave {
             this.offlineSource = this.offlineContext.createBufferSource();
             this.sourceNode.loop = !!this.opts.loop;
             this.analyser = this.context.createAnalyser();
+            this.gainNode = this.context.createGain()
         }
 
 
@@ -320,8 +321,10 @@ class CircularAudioWave {
         this.analyser.fftSize = 2048;
 
         this.sourceNode.connect(this.analyser);
-
-        this.sourceNode.connect(this.context.destination);
+        this.gainNode.gain.value = 0.5; // 10 %
+        this.gainNode.connect(this.context.destination);
+        
+        this.sourceNode.connect(this.gainNode);
         this.sourceNode.onended = this.onended.bind(this);
     }
 
